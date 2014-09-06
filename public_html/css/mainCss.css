@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+}
+
+
+button {
+ height: 70px;   
+ width: 70px;
+ margin-left: 5px;
+}
+
+.mainContainer {
+    max-width: 480px;
+    max-height: 320px;
+    position: relative;
+}
+
+#gameCanvas {
+    background-color: purple;
+    display: inline-block;
+}
+
+#control {
+    height: 40px;
+    width: 100%;
+    position: absolute;
+    bottom: 20px;
+    right: 0;
+}

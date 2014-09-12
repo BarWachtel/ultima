@@ -117,9 +117,6 @@ gm.mod.graphics = {
         gm.mod.graphics.scale = gm.mod.graphics.currentWidth / gm.mod.graphics.WIDTH;
         gm.mod.graphics.offset.top = gm.mod.graphics.canvas.offsetTop;
         gm.mod.graphics.offset.left = gm.mod.graphics.canvas.offsetLeft;
-
-        gm.mod.graphics.backgroundRect = new createjs.Shape();
-
     },
     state: {
         update: null

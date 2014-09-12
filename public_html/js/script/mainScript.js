@@ -1,11 +1,19 @@
+//Game init should first init network, then logic and finally graphics
 
-var gm = {};
+var gm = {
+};
 gm.mod = {
     network: {},
-    graphics: {},
-    logic: {}
+    logic: {},
+    graphics: {}
+
 };
 
+gm.init = function() {
+    gm.mod.network.init();
+    gm.mod.logic.init();
+    gm.mod.graphics.init();
+};
 
 gm.mod.consts = {
     PlayerHealth: 100,
@@ -15,9 +23,7 @@ gm.mod.consts = {
     DeltaTime_60Fps: 16.6
 };
 
-
-
-var player;
+//Graphics module
 
 gm.mod.graphics = {
     canvas: null,
@@ -29,7 +35,6 @@ gm.mod.graphics = {
     currentHeight: null,
     scale: 1,
     offset: {top: 0, left: 0},
-    entities: [],
     deltaTime: 0.0,
     resources: {
         head: null,
@@ -56,38 +61,9 @@ gm.mod.graphics = {
         gm.mod.graphics.offset.top = gm.mod.graphics.canvas.offsetTop;
         gm.mod.graphics.offset.left = gm.mod.graphics.canvas.offsetLeft;
 
-        // listen for clicks
-        window.addEventListener('click', function(e) {
-            e.preventDefault();
-            gm.mod.logic.Input.set(e);
-        }, false);
-
-        // listen for touches
-        window.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // the event object has an array
-            // named touches; we just want
-            // the first touch
-            gm.mod.logic.Input.set(e.touches[0]);
-        }, false);
-        window.addEventListener('touchmove', function(e) {
-            // we're not interested in this,
-            // but prevent default behaviour
-            // so the screen doesn't scroll
-            // or zoom
-            e.preventDefault();
-        }, false);
-        window.addEventListener('touchend', function(e) {
-            // as above
-            e.preventDefault();
-        }, false);
-
-        $('.control').click(controlClicked);
         //Once resources loaded startGame() is called
         gm.mod.graphics.loadResources();
     },
-    actions: [],
-    confirmedActions: [],
     resize: function() {
         gm.mod.graphics.currentHeight = window.innerHeight;
         // resize the width in proportion
@@ -117,9 +93,6 @@ gm.mod.graphics = {
         gm.mod.graphics.scale = gm.mod.graphics.currentWidth / gm.mod.graphics.WIDTH;
         gm.mod.graphics.offset.top = gm.mod.graphics.canvas.offsetTop;
         gm.mod.graphics.offset.left = gm.mod.graphics.canvas.offsetLeft;
-    },
-    state: {
-        update: null
     }
 };
 
@@ -152,6 +125,47 @@ gm.mod.graphics.loop = function(timeStamp) {
     window.requestAnimFrame(gm.mod.graphics.loop);
 };
 
+
+//Logic Module (Engine)
+gm.mod.logic = {
+    Input: null,
+    actions: [],
+    confirmedActions: [],
+    entities: [],
+    player: null,
+    state: {},
+    init: function() {
+        // listen for clicks
+        window.addEventListener('click', function(e) {
+            e.preventDefault();
+            gm.mod.logic.Input.set(e);
+        }, false);
+
+        // listen for touches
+        window.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // the event object has an array
+            // named touches; we just want
+            // the first touch
+            gm.mod.logic.Input.set(e.touches[0]);
+        }, false);
+        window.addEventListener('touchmove', function(e) {
+            // we're not interested in this,
+            // but prevent default behaviour
+            // so the screen doesn't scroll
+            // or zoom
+            e.preventDefault();
+        }, false);
+        window.addEventListener('touchend', function(e) {
+            // as above
+            e.preventDefault();
+        }, false);
+
+        $('.control').click(controlClicked);
+    }
+};
+
+
 gm.mod.logic.state.update = function() {
     var i;
     checkForAuthorizedActions();
@@ -164,12 +178,12 @@ gm.mod.logic.state.update = function() {
 
         //For now I will simply relay actions to "sendToOpponent"
         //And they will immediately go into authorized actions
-        moveCommand(player, gm.mod.logic.Input.x, gm.mod.logic.Input.y);
+        moveCommand(gm.mod.logic.player, gm.mod.logic.Input.x, gm.mod.logic.Input.y);
 
         gm.mod.logic.Input.tapped = false;
     }
-    for (i = 0; i < gm.mod.graphics.entities.length; i++) {
-        gm.mod.graphics.entities[i].update();
+    for (i = 0; i < gm.mod.logic.entities.length; i++) {
+        gm.mod.logic.entities[i].update();
     }
 };
 
@@ -180,17 +194,26 @@ gm.mod.logic.Input = {
     set: function(data) {
         this.x = (data.pageX - gm.mod.graphics.offset.left) / gm.mod.graphics.scale;
         this.y = (data.pageY - gm.mod.graphics.offset.top) / gm.mod.graphics.scale;
-        
+
         console.log("X value clicked " + this.x);
         console.log("Y value clicked " + this.y);
         this.tapped = true;
     }
 };
 
+//Any other kind of click goes here
+function controlClicked(clickEvent) {
+    console.log("control Clicked!");
+
+    gm.mod.logic.player.isMoving = false;
+    clickEvent.preventDefault();
+    return false;
+}
+
 function startGame() {
-    player = new Player();
-    player.createPlayer(60, 180);
-    gm.mod.graphics.entities.push(player);
+    gm.mod.logic.player = new Player();
+    gm.mod.logic.player.createPlayer(60, 180);
+    gm.mod.logic.entities.push(gm.mod.logic.player);
     gm.mod.graphics.loop(new Date().getTime());
 }
 
@@ -219,16 +242,15 @@ function releaseAimedAttack(player) {
 
 }
 
-//Any other kind of click goes here
-function controlClicked(clickEvent) {
-    console.log("control Clicked!");
-    
-    player.isMoving = false;
-    clickEvent.preventDefault();
-    return false;
-}
-
 
 function performActions(playersActions) {
 
 }
+
+//Placeholder for network module
+gm.mod.network = {
+    init: function() {
+        console.log('network.init() called');
+    }
+    
+};

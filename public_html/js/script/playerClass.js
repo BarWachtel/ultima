@@ -1,7 +1,7 @@
 //Class Prototype
 function Player() {
-    this.health = GameConstants.PlayerHealth;
-    this.mana = GameConstants.PlayerMana;
+    this.health = gm.mod.consts.PlayerHealth;
+    this.mana = gm.mod.consts.PlayerMana;
 
     this.movingToX = null;
     this.movingToY = null;
@@ -14,8 +14,8 @@ Player.prototype.createPlayer = function(x, y) {
 
     this.char = new createjs.Container();
 
-    this.head = new createjs.Bitmap(UA.resources.head);
-    this.body = new createjs.Bitmap(UA.resources.body);
+    this.head = new createjs.Bitmap(gm.mod.graphics.resources.head);
+    this.body = new createjs.Bitmap(gm.mod.graphics.resources.body);
 
     var headRectDimensions = this.head.getBounds();
 
@@ -33,7 +33,7 @@ Player.prototype.createPlayer = function(x, y) {
     this.char.scaleX = 0.5;
     this.char.scaleY = 0.5;
 
-    UA.stage.addChild(this.char);
+    gm.mod.graphics.stage.addChild(this.char);
 };
 
 Player.prototype.update = function() {
@@ -41,15 +41,15 @@ Player.prototype.update = function() {
         var charPos = this.char;
 
         if (charPos.x < this.movingToX) {
-            charPos.x += GameConstants.WalkSpeed;
+            charPos.x += gm.mod.consts.WalkSpeed;
         } else if (charPos.x > this.movingToX) {
-            charPos.x -= GameConstants.WalkSpeed;
+            charPos.x -= gm.mod.consts.WalkSpeed;
         }
 
         if (charPos.y < this.movingToY) {
-            charPos.y += GameConstants.WalkSpeed;
+            charPos.y += gm.mod.consts.WalkSpeed;
         } else if (charPos.y > this.movingToY) {
-            charPos.y -= GameConstants.WalkSpeed;
+            charPos.y -= gm.mod.consts.WalkSpeed;
         }
 
         if (Math.max(Math.abs(charPos.x - this.movingToX), Math.abs(charPos.y - this.movingToY)) <= 3) {

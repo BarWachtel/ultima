@@ -15,6 +15,17 @@ gm.init = function() {
     gm.mod.graphics.init();
 };
 
+
+//After network, logic and graphic modules are initialized
+//and resources are loaded, this function is called
+gm.startGame = function() {
+    gm.mod.logic.player = new Player();
+    gm.mod.logic.player.createPlayer(60, 180);
+    gm.mod.logic.entities.push(gm.mod.logic.player);
+    gm.mod.graphics.loop(new Date().getTime());
+};
+
+
 gm.mod.consts = {
     PlayerHealth: 100,
     PlayerMana: 100,
@@ -23,7 +34,7 @@ gm.mod.consts = {
     DeltaTime_60Fps: 16.6
 };
 
-//Graphics module
+/***********************GRAPHICS MODULE*********************************/
 
 gm.mod.graphics = {
     canvas: null,
@@ -126,7 +137,7 @@ gm.mod.graphics.loop = function(timeStamp) {
 };
 
 
-//Logic Module (Engine)
+/***********************LOGIC MODULE(engine)*********************************/
 gm.mod.logic = {
     Input: null,
     actions: [],
@@ -210,13 +221,6 @@ function controlClicked(clickEvent) {
     return false;
 }
 
-function startGame() {
-    gm.mod.logic.player = new Player();
-    gm.mod.logic.player.createPlayer(60, 180);
-    gm.mod.logic.entities.push(gm.mod.logic.player);
-    gm.mod.graphics.loop(new Date().getTime());
-}
-
 function checkForAuthorizedActions() {
     //For now just pass up all actions as authorized
 }
@@ -247,10 +251,30 @@ function performActions(playersActions) {
 
 }
 
-//Placeholder for network module
+/***********************NETWORK MODULE(placeholder)*********************************/
 gm.mod.network = {
     init: function() {
         console.log('network.init() called');
+    },
+    dummyPeer: {
+        commands: [],
+        //mock sending out cmds
+        send: function(cmds) {
+            this.commands = this.commands.concat(cmds);
+        },
+        rcv: function() {
+            var authCmds = this.commands.slice(0);
+            this.commands = [];
+            return authCmds;
+        }   
+    },
+    submitCommands: function(cmds) {
+        console.log('inside gm.mod.network.submitCommands');
+        this.dummyPeer.send(cmds);
+    },
+    recieveCommands: function() {
+        console.log('inside gm.mod.network.recieveCommands');
+        return this.dummyPeer.rcv();
     }
-    
 };
+

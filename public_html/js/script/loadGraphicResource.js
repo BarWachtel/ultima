@@ -14,5 +14,5 @@ gm.mod.graphics.resourceLoadComplete = function() {
     gm.mod.graphics.resources.body = gm.mod.graphics.loadQueue.getResult('playerBody');
     console.log(gm.mod.graphics.resources.head);
 
-    startGame();
+    gm.startGame();
 };
